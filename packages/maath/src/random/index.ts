@@ -369,12 +369,12 @@ const defaultEquilateral = {
 // random equilateral, theory dervied here: https://math.stackexchange.com/questions/3537762/random-point-in-a-triangle
 export function inEquilateral(
   buffer: TypedArray,
-  vertices?: Equilateral,
+  equilateral?: Equilateral,
   rng: Generator = defaultGen
 ) {
   let { width, height, center } = {
     ...defaultEquilateral,
-    ...vertices,
+    ...equilateral,
   };
 
   center = [width + center[0], height + center[1]];
@@ -395,6 +395,8 @@ export function inEquilateral(
     buffer[i] = x - center[0]; // equilateral
     buffer[i + 1] = y - center[1]; // equilateral
   }
+
+  return buffer;
 }
 
 type Prism = {
@@ -416,12 +418,12 @@ const defaultPrism = {
  */
 export function inPrism(
   buffer: TypedArray,
-  options?: Prism,
+  prism?: Prism,
   rng: Generator = defaultGen
 ) {
   let { width, height, depth, center } = {
     ...defaultPrism,
-    ...options,
+    ...prism,
   };
 
   center = [width + center[0], height + center[1], depth + center[2]];
