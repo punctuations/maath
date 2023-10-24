@@ -354,4 +354,98 @@ export function onBox(
   return buffer;
 }
 
+type Equilateral = {
+  width?: number;
+  height?: number;
+  center?: [number, number];
+};
+
+const defaultEquilateral = {
+  width: 3,
+  height: 3,
+  center: [0, 0],
+};
+
+// random equilateral, theory dervied here: https://math.stackexchange.com/questions/3537762/random-point-in-a-triangle
+export function inEquilateral(
+  buffer: TypedArray,
+  vertices?: Equilateral,
+  rng: Generator = defaultGen
+) {
+  let { width, height, center } = {
+    ...defaultEquilateral,
+    ...vertices,
+  };
+
+  center = [width + center[0], height + center[1]];
+
+  for (let i = 0; i < buffer.length; i += 2) {
+    let r1 = rng.value();
+    let r2 = rng.value();
+
+    // if over the diagonal, then flip r1 & r2
+    if (r1 + r2 > 1) {
+      r1 = 1 - r1;
+      r2 = 1 - r2;
+    }
+
+    let x = 2 * width * r2 + width * r1;
+    let y = 2 * height * r1;
+
+    buffer[i] = x - center[0]; // equilateral
+    buffer[i + 1] = y - center[1]; // equilateral
+  }
+}
+
+type Prism = {
+  width?: number;
+  height?: number;
+  depth?: number;
+  center?: [number, number, number];
+};
+
+const defaultPrism = {
+  width: 2,
+  depth: 3,
+  height: 2,
+  center: [0, 0, 0],
+};
+
+/***
+ * [3D] Prism
+ */
+export function inPrism(
+  buffer: TypedArray,
+  options?: Prism,
+  rng: Generator = defaultGen
+) {
+  let { width, height, depth, center } = {
+    ...defaultPrism,
+    ...options,
+  };
+
+  center = [width + center[0], height + center[1], depth + center[2]];
+
+  // https://math.stackexchange.com/questions/3537762/random-point-in-a-triangle
+  for (let i = 0; i < buffer.length; i += 3) {
+    let r1 = rng.value();
+    let r2 = rng.value();
+
+    // if over the diagonal, then flip r1 & r2
+    if (r1 + r2 > 1) {
+      r1 = 1 - r1;
+      r2 = 1 - r2;
+    }
+
+    let x = width * 2 * r2 + width * r1;
+    let y = height * 2 * r1;
+
+    buffer[i] = x - center[0]; // equilateral
+    buffer[i + 1] = y - center[1]; // equilateral
+    buffer[i + 2] = rng.value() * (2 * depth) - center[2]; // random point across depth
+  }
+
+  return buffer;
+}
+
 export * as noise from "./noise";
